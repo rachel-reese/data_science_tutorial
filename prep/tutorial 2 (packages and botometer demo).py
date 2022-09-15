@@ -13,7 +13,7 @@ twitter_app_auth = {
 bom = botometer.Botometer(wait_on_ratelimit=True,
                           rapidapi_key=rapidapi_key,
                           **twitter_app_auth)
-accounts = ["@roun_sa_ville"]
+accounts = ['@clayadavis', '@onurvarol', '@jabawack']
 
 for id, result in bom.check_accounts_in(accounts):
     pprint(result)
