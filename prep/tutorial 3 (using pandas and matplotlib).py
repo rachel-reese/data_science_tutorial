@@ -1,26 +1,28 @@
-from dotenv import load_dotenv
-import os
 import botometer
 import pandas as pd
 import matplotlib.pyplot as plt
 
-load_dotenv()
 
-rapidapi_key = os.getenv('RAPIDAPI_KEY')
+rapidapi_key = 'adba30d77bmshdcfbc478e5ccc58p18b171jsn5462eff7ccbb'
 twitter_app_auth = {
-    'consumer_key': os.getenv('TWITTER_API_KEY'),
-    'consumer_secret': os.getenv('TWITTER_API_SECRET'),
+    'consumer_key': 'w8CyF1ZjqyfZISDF1UnR97U4n',
+    'consumer_secret': 'MJFsEhID9wnYAJCCfDRbDIme4jyA2tZXRW8InCdVD0teren72h',
 }
 bom = botometer.Botometer(wait_on_ratelimit=True,
                           rapidapi_key=rapidapi_key,
                           **twitter_app_auth)
 
-input_p = r'C:\Users\Rachel\Documents\test_set.csv'
-output_p_eng = r'C:\Users\Rachel\Documents\Twitter Data\eng_test.csv'
-output_p_univ = r'C:\Users\Rachel\Documents\Twitter Data\univ_test.csv'
+
+def split_csv(input_path, chunksize):
+    for i, chunk in enumerate(pd.read_csv(input_path, chunksize=chunksize)):
+        chunk.to_csv(r'C:\Users\Rachel\Documents\twitter_tutorial_2022\chunk{}.csv'.format(i), index=False)
 
 
 def create_csv(input_path, output_path_en, output_path_univ):
+    chunk = input_path.split('\\')[-1]
+    chunk = chunk.replace('chunk', '')
+    chunk = chunk.replace('.csv', '')
+
     training_set = pd.read_csv(input_path)
     ids = training_set["id"]
     columns = ["id", "CAP", "astroturf", "fake follower", "financial", "other", "overall", "self-declared", "spammer",
@@ -76,11 +78,25 @@ def create_csv(input_path, output_path_en, output_path_univ):
 
         except Exception as e:
             accounts_processed += 1
-            print(f"{id} could not be fetched: {e} ({accounts_processed}/{len(ids)} accounts processed)")
+            print(f'{id} could not be fetched. ({accounts_processed}/{len(ids)} accounts processed)')
 
-    # eng_df.to_csv(output_path_en, index=False)
-    # univ_df.to_csv(output_path_univ, index=False)
+    output_path_en = output_path_en + r'\english{}.csv'.format(chunk)
+    output_path_univ = output_path_univ + r'\universal{}.csv'.format(chunk)
+
+    eng_df.to_csv(output_path_en, index=False)
+    univ_df.to_csv(output_path_univ, index=False)
+
     return [eng_df, univ_df]
+
+
+def merge_files(files):
+    if 'english' in files[0].split('/')[-1]:
+        lang = 'english'
+    else:
+        lang = 'universal'
+    df = pd.concat(map(pd.read_csv, files), ignore_index=True)
+    df.to_csv(r'C:\Users\Rachel\Documents\twitter_tutorial_2022\{}\{} merged.csv'.format(lang, lang), index=False)
+    return df
 
 
 def create_histograms(df, lang, color1=None, color2=None, color3=None):
@@ -93,22 +109,35 @@ def create_histograms(df, lang, color1=None, color2=None, color3=None):
 
     human_df.hist(figsize=(15, 12), color=color1)
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    plt.suptitle(f"Human ({lang})")
-    # plt.savefig(r'C:\Users\Rachel\Documents\Twitter Data\human ({})_test.png'.format(lang))
+    plt.suptitle(f'Human ({lang})')
+    plt.savefig(r'C:\Users\Rachel\Documents\twitter_tutorial_2022\{}\human_({})'.format(lang, lang))
 
     bot_df.hist(figsize=(15, 12), color=color2)
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    plt.suptitle(f"Bot ({lang})")
-    # plt.savefig(r'C:\Users\Rachel\Documents\Twitter Data\bot ({})_test.png'.format(lang))
+    plt.suptitle(f'Bot ({lang})')
+    plt.savefig(r'C:\Users\Rachel\Documents\twitter_tutorial_2022\{}\bot_({})'.format(lang, lang))
 
     org_df.hist(figsize=(15, 12), color=color3)
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    plt.suptitle(f"Organization ({lang})")
-    # plt.savefig(r'C:\Users\Rachel\Documents\Twitter Data\org ({})_test.png'.format(lang))
+    plt.suptitle(f'Organization ({lang})')
+    plt.savefig(r'C:\Users\Rachel\Documents\twitter_tutorial_2022\{}\org_({})'.format(lang, lang))
 
     plt.show()
 
 
-df_list = create_csv(input_p, output_p_eng, output_p_univ)
-create_histograms(df_list[0], "english", "pink", "darkmagenta", "palevioletred")
-create_histograms(df_list[1], "universal", "orchid", "plum", "mediumvioletred")
+input_csv = r'C:\Users\Rachel\Documents\twitter_tutorial_2022\marked_twitter_id2.csv'
+chunks_eng = [r'C:\Users\Rachel\Documents\twitter_tutorial_2022\english\english{}.csv'.format(i) for i in range(4)]
+chunks_univ = [r'C:\Users\Rachel\Documents\twitter_tutorial_2022\universal\universal{}.csv'.format(i) for i in range(4)]
+output_eng = r'C:\Users\Rachel\Documents\twitter_tutorial_2022\english'
+output_univ = r'C:\Users\Rachel\Documents\twitter_tutorial_2022\universal'
+
+# split_csv(input_csv, 29)
+# create_csv(r'C:\Users\Rachel\Documents\twitter_tutorial_2022\chunk0.csv', output_eng, output_univ)
+# create_csv(r'C:\Users\Rachel\Documents\twitter_tutorial_2022\chunk1.csv', output_eng, output_univ)
+# create_csv(r'C:\Users\Rachel\Documents\twitter_tutorial_2022\chunk2.csv', output_eng, output_univ)
+# create_csv(r'C:\Users\Rachel\Documents\twitter_tutorial_2022\chunk3.csv', output_eng, output_univ)
+# eng_merged = merge_files(chunks_eng)
+# univ_merged = merge_files(chunks_univ)
+# df_list = create_csv(input_csv, output_eng, output_univ)
+# create_histograms(df_list[0], "english", "pink", "darkmagenta", "palevioletred")
+# create_histograms(df_list[1], "universal", "orchid", "plum", "mediumvioletred")
