@@ -84,3 +84,23 @@ def best_zscore(zscore, lang, input_path, show=False):
     plt.savefig(fr'C:\Users\Rachel\Documents\Twitter Data\zscore_{lang}_test')
     if show:
         plt.show()
+        
+        
+best_zscore(1, 'eng', input_path_en, True)
+best_zscore(1, 'un', input_path_un, True)
+        
+en_df = orgs_to_bots(input_path_en)
+un_df = orgs_to_bots(input_path_un)
+
+remove_outliers(0.78, en_df, en_path_trimmed)
+remove_outliers(0.78, un_df, un_path_trimmed)
+
+logistic_regression(pd.read_csv(en_path_trimmed), True)
+logistic_regression(pd.read_csv(un_path_trimmed), True):
+
+
+
+
+
+
+
