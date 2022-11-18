@@ -1,3 +1,17 @@
+import pickle
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn import model_selection, preprocessing
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import ConfusionMatrixDisplay
+
+en_path_trimmed = r'C:\Users\Rachel\Documents\Twitter Data\eng_test_trimmed.csv'
+un_path_trimmed = r'C:\Users\Rachel\Documents\Twitter Data\univ_test_trimmed.csv'
+
+en_df_trimmed = pd.read_csv(en_path_trimmed)
+un_df_trimmed = pd.read_csv(un_path_trimmed)
+
 def confusion_matrix(lang, input_df, show=False):
     x = input_df.drop(["spammer", "label"], axis=1).values
     if "id" in input_df.columns:
