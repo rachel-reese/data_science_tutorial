@@ -1,3 +1,18 @@
+import pickle
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn import model_selection, preprocessing
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import ConfusionMatrixDisplay
+
+en_path_trimmed = r'C:\Users\Rachel\Documents\Twitter Data\eng_test_trimmed.csv'
+un_path_trimmed = r'C:\Users\Rachel\Documents\Twitter Data\univ_test_trimmed.csv'
+
+en_df_trimmed = pd.read_csv(en_path_trimmed)
+un_df_trimmed = pd.read_csv(un_path_trimmed)
+
+
 def confusion_matrix(lang, input_df, show=False):
     x = input_df.drop(["spammer", "label"], axis=1).values
     if "id" in input_df.columns:
@@ -27,14 +42,6 @@ def confusion_matrix(lang, input_df, show=False):
         plt.show()
 
 
-def main(zscore, lang, input_path, output_path, show_matrix=False, print_result=False,):
-    df = orgs_to_bots(input_path)
-    df_trimmed = remove_outliers(zscore, df, output_path)
-    logistic_regression(df_trimmed, print_result)
-    confusion_matrix(lang, df_trimmed, show_matrix)
+confusion_matrix(lang, en_df_trimmed, show_matrix)
+confusion_matrix(lang, un_df_trimmed, show_matrix)
 
-
-best_zscore(3, "en", input_path_en, True)
-best_zscore(3, "un", input_path_un, True)
-main(1.7, "en", input_path_en, en_path_trimmed)
-main(1.4, "un", input_path_un, un_path_trimmed, True, True)
