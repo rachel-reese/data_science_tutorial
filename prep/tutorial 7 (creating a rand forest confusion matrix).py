@@ -45,8 +45,7 @@ def confusion_matrix(lang, input_df, show=False):
 
     if show:
         plt.show()
+        
 
-
-dff = orgs_to_bots(input_path_en)
-confusion_matrix("eng", remove_outliers(1.7, dff), True)
-
+confusion_matrix(lang, en_df_trimmed, show_matrix)
+confusion_matrix(lang, un_df_trimmed, show_matrix)
