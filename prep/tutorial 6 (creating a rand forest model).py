@@ -68,3 +68,18 @@ def random_forest(input_df, print_result=False):
     if print_result:
         print(model.best_score_)
         print(model.best_params_)
+        
+        
+        
+best_zscore(1, 'eng', input_path_en, True)
+best_zscore(1, 'un', input_path_un, True)
+        
+en_df = orgs_to_bots(input_path_en)
+un_df = orgs_to_bots(input_path_un)
+
+remove_outliers(0.78, en_df, en_path_trimmed)
+remove_outliers(0.78, un_df, un_path_trimmed)
+
+logistic_regression(pd.read_csv(en_path_trimmed), True)
+logistic_regression(pd.read_csv(un_path_trimmed), True):
+
